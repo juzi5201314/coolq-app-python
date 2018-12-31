@@ -14,7 +14,8 @@ api与事件与[rust sdk](https://github.com/juzi5201314/coolq-sdk-rust)一致�
 
 ## 环境
 本插件运行需要python3.5+，如在windows上运行，只需要安装python环境即可。pip同理。  
-如在docker中运行
+如在docker中运行，请容后解决（我还没想到，跑）。  
+或者手动在wine里安装python，但是从py3.5开始，官网就没有提供.msi了。
 
 ## 错误处理
 因为pyo3库的bug，coolq-app-python暂时无法捕获python的异常。如果python代码出现错误，会导致酷q崩溃。待解决。
