@@ -1,0 +1,128 @@
+{
+  "ret": 1,
+  "appid": "net.systir.coolq_app_python",
+  "name": "coolq_app_python",
+  "apiver": 9,
+  "version": "0.0.1",
+  "version_id": 1,
+  "author": "Soeur",
+  "description": "使用python编写酷q插件",
+  "event": [
+    {
+      "id": 1,
+      "type": 21,
+      "name": "PrivateMessage",
+      "function": "on_private_message",
+      "priority": 30000
+    },
+    {
+      "id": 2,
+      "type": 2,
+      "name": "GroupMessage",
+      "function": "on_group_message",
+      "priority": 30000
+    },
+    {
+      "id": 3,
+      "type": 1001,
+      "name": "Startup",
+      "function": "startup",
+      "priority": 30000
+    },
+    {
+      "id": 4,
+      "type": 1003,
+      "name": "Enable",
+      "function": "enable",
+      "priority": 30000
+    },
+    {
+      "id": 5,
+      "type": 1002,
+      "name": "Exit",
+      "function": "exit",
+      "priority": 30000
+    },
+    {
+      "id": 6,
+      "type": 4,
+      "name": "DiscussMessage",
+      "function": "on_discuss_message",
+      "priority": 30000
+    },
+    {
+      "id": 7,
+      "type": 101,
+      "name": "GroupAdmin",
+      "function": "on_group_admin",
+      "priority": 30000
+    },
+    {
+      "id": 8,
+      "type": 102,
+      "name": "GroupMemberDecrease",
+      "function": "on_group_member_decrease",
+      "priority": 30000
+    },
+    {
+      "id": 9,
+      "type": 103,
+      "name": "GroupMemberIncrease",
+      "function": "on_group_member_increase",
+      "priority": 30000
+    },
+    {
+      "id": 10,
+      "type": 201,
+      "name": "FriendAdd",
+      "function": "on_friend_add",
+      "priority": 30000
+    },
+    {
+      "id": 11,
+      "type": 301,
+      "name": "AddFriend",
+      "function": "on_add_friend",
+      "priority": 30000
+    },
+    {
+      "id": 12,
+      "type": 303,
+      "name": "AddGroup",
+      "function": "on_add_group",
+      "priority": 30000
+    },
+    {
+      "id": 13,
+      "type": 1004,
+      "name": "Disable",
+      "function": "disable",
+      "priority": 30000
+    }
+  ],
+  "auth": [
+    20,
+    30,
+    101,
+    103,
+    106,
+    110,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    130,
+    131,
+    140,
+    150,
+    151,
+    160,
+    161,
+    180
+  ]
+}
