@@ -9,6 +9,7 @@ links = "CQP"
 #coolq-sdk-rust = {path = "../coolq-sdk-rust"}
 coolq-sdk-rust = {git = "https://github.com/juzi5201314/coolq-sdk-rust.git"}
 lazy_static = "1.2.0"
+alerts = "0.1.1"
 
 [dependencies.pyo3]
 git = "https://github.com/PyO3/pyo3.git"
@@ -17,3 +18,8 @@ features = ["extension-module"]
 [lib]
 name = "coolq_app_python"
 crate-type = ["cdylib"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = "z"

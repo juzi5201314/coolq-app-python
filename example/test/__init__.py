@@ -7,10 +7,11 @@ import requests#测试使用第三方库。测试时记得pip install requests
 coolq_sdk = None
 
 def main():
+    sys.stderr = ErrOut()#输出错误信息到酷q日志，请务必重定向stderr
     sys.stdout = coolq_sdk.Logger()#把stdout重定向到酷q日志。可以不使用。
     coolq_sdk.register("on_private_message", on_private_message)#注册事件
     coolq_sdk.register("exit", exit)
-
+    coolq_sdk.alert("title", "message")
     return {
         "version": "0.0.1",
         "author": "soeur",

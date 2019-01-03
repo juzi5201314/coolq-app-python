@@ -9,7 +9,7 @@ extern crate lazy_static;
 use coolq_sdk_rust::cqpapi;
 
 use pyo3::{IntoPyTuple, prelude::*, types::*};
-use std::{collections::HashMap, fs::{create_dir_all, read_dir}, path::Path, sync::Mutex};
+use std::{collections::HashMap, fs::{create_dir_all, read_dir}, path::Path, sync::Mutex, thread};
 
 static APPID: &'static str = "net.systir.coolq_app_python";
 static VERSION: i32 = 9;
@@ -29,13 +29,26 @@ pub extern "Rust" fn appinfo() -> (i32, String) {
 #[allow(unused_variables)]
 pub unsafe extern "Rust" fn start() -> i32 {
 
+    fn check_runtime_error<T>(re: Result<T, PyErr>) -> T {
+        match re {
+            Ok(ok) => ok,
+            Err(e) => {
+                let gil = Python::acquire_gil();
+                let py = gil.python();
+                e.print(py);
+                alert::alert("python应用出现错误", "具体错误信息请查看酷q运行日志");
+                panic!("python runtime error!")
+            },
+        }
+    }
+
     cqpapi::ON_PRIVATE_MESSAGE = Some(Box::new(|sub_type: i32, send_time: i32, user_id: i64, msg: String, font: i32| -> i32 {
         let map = listeners.lock().unwrap();
         if map.contains_key("on_private_message") {
             for obj in map.get("on_private_message").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, user_id, msg.as_str(), font).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, user_id, msg.as_str(), font).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -46,7 +59,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("enable").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, ().into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, ().into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -57,7 +70,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("disable").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, ().into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, ().into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -68,7 +81,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("exit").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, ().into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, ().into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -79,7 +92,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("on_group_message").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, group_id, user_id, anonymous.as_str(), msg.as_str(), font).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, group_id, user_id, anonymous.as_str(), msg.as_str(), font).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -90,7 +103,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("on_discuss_message").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, discuss_id, user_id, msg.as_str(), font).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, discuss_id, user_id, msg.as_str(), font).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -101,7 +114,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("on_group_admin").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, group_id, user_id).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, group_id, user_id).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -112,7 +125,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("on_group_member_decrease").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, group_id, from_user_id, user_id).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, group_id, from_user_id, user_id).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -123,7 +136,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("on_group_member_increase").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, group_id, from_user_id, user_id).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, group_id, from_user_id, user_id).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -134,7 +147,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("on_friend_add").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, user_id).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, user_id).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -145,7 +158,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("on_add_friend").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, user_id, msg.as_str(), flag.as_str()).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, user_id, msg.as_str(), flag.as_str()).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -156,7 +169,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
             for obj in map.get("on_add_group").unwrap() {
                 let gil = Python::acquire_gil();
                 let py = gil.python();
-                obj.call1(py, (sub_type, send_time, group_id, user_id, msg.as_str(), flag.as_str()).into_tuple(py)).unwrap();
+                check_runtime_error(obj.call1(py, (sub_type, send_time, group_id, user_id, msg.as_str(), flag.as_str()).into_tuple(py)));
             }
         }
         cqpapi::EVENT_IGNORE
@@ -176,10 +189,17 @@ pub unsafe extern "Rust" fn start() -> i32 {
             let p = entry.unwrap().path();
             if p.is_dir() {
                 let name = p.file_name().unwrap().to_str().unwrap();
-                let test = py.import(name).unwrap();
+                let test = py.import(name);
+                let test = match test {
+                    Ok(ok) => ok,
+                    Err(e) => {
+                        alert::alert(&format!("{}模块加载失败", name), "请检查python环境与是否有语法错误");
+                        continue
+                    },
+                };
+                test.add_class::<ErrOut>().unwrap();
                 test.add_wrapped(wrap_module!(coolq_sdk)).unwrap();
-                let r = test.call1("main", ().into_tuple(py)).unwrap();
-                //test.call1("on_private_message", (0, 0, 1034236490, "emmmm", 0).into_tuple(py));
+                let r = check_runtime_error(test.call1("main", ().into_tuple(py)));
                 let dict: &PyDict = <&PyDict as FromPyObject>::extract(&r).unwrap();
                 let mut m = modules.lock().unwrap();
                 let n = name.to_string();
@@ -193,6 +213,7 @@ pub unsafe extern "Rust" fn start() -> i32 {
                 cqpapi::add_log(cqpapi::CQLOG_INFOSUCCESS, "info", &format!("python模块: {}加载完成", name));
             }
         }
+
         cqpapi::EVENT_IGNORE
     }));
     cqpapi::EVENT_IGNORE
@@ -217,7 +238,26 @@ impl Logger {
     }
 }
 
-//#[warn(dead_code)]
+#[pyclass]
+struct ErrOut {}
+
+#[pymethods]
+impl ErrOut {
+    #[new]
+    fn __new__(obj: &PyRawObject) -> PyResult<()> {
+        obj.init(|| ErrOut {})
+    }
+
+    fn write(&self, str: &str) -> i32 {
+        if !str.trim().is_empty() {
+            cqpapi::add_log(cqpapi::CQLOG_ERROR, "python", str)
+        }else {
+            0
+        }
+    }
+}
+
+#[allow(dead_code)]
 #[warn(unused_must_use)]
 #[pymodule]
 fn coolq_sdk(_py: Python, m: &PyModule) -> PyResult<()> {
@@ -344,6 +384,17 @@ fn coolq_sdk(_py: Python, m: &PyModule) -> PyResult<()> {
         map.get_mut(&event.to_string()).unwrap().push(func);
         0
     }
+
+    #[pyfunction]
+    fn alert(title: &str, msg: &str) -> i32 {
+        let title = String::from(title);
+        let msg = String::from(msg);
+        thread::spawn(move || {
+            alert::alert(title.as_str(), msg.as_str());
+        });
+        0
+    }
+
     m.add_class::<Logger>()?;
     m.add_wrapped(wrap_function!(send_private_msg))?;
     m.add_wrapped(wrap_function!(send_group_msg))?;
@@ -374,6 +425,7 @@ fn coolq_sdk(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_function!(set_fatal))?;
     m.add_wrapped(wrap_function!(get_record))?;
     m.add_wrapped(wrap_function!(register))?;
+    m.add_wrapped(wrap_function!(alert))?;
 
     Ok(())
 }
