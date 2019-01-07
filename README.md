@@ -22,7 +22,9 @@ docker pull coolq-docker-python:3.7.2
 docker暂不完善，无法使用pip，python为32位，待完善。  
 
 ## 错误处理
-因为pyo3库的bug，coolq-app-python暂时无法捕获python的异常。如果python代码出现错误，会导致酷q崩溃。待解决。
+如果python运行时出现异常，那么异常信息会输出到酷q日志，并且酷q停止运行。  
+因为pyo3库直接把把异常消息输出到了stdout，而rust无法重定向stdout。所以如果是语法错误无法解析脚本的话，则酷q直接崩溃。
+
 
 ## 其他功能
 慢慢来，别急。
